@@ -1,0 +1,1332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ProcureFlow — Procurement Workflow Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<script>
+const ICONS={
+  'ti-inbox':'<path d="M4 4h16v10H4z"/><path d="M4 14h4l2 3h4l2-3h4"/>',
+  'ti-list-check':'<path d="M3.5 5.5l1.5 1.5 2.5-2.5M3.5 11.5l1.5 1.5 2.5-2.5M3.5 17.5l1.5 1.5 2.5-2.5"/><line x1="11" y1="6" x2="20" y2="6"/><line x1="11" y1="12" x2="20" y2="12"/><line x1="11" y1="18" x2="20" y2="18"/>',
+  'ti-building-store':'<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V12a1 1 0 0 0-1-1h-6a1 1 0 0 0-1 1v9"/><path d="M2 11l2-6h16l2 6"/>',
+  'ti-history':'<path d="M12 8v4l3 3"/><path d="M3.05 11a9 9 0 1 0 .5-4"/><path d="M3 3v4h4"/>',
+  'ti-arrow-left':'<line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>',
+  'ti-arrow-right':'<line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>',
+  'ti-plus':'<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
+  'ti-refresh':'<path d="M20 11A8 8 0 1 0 4.5 16.5"/><polyline points="20 4 20 11 13 11"/>',
+  'ti-x':'<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>',
+  'ti-check':'<polyline points="20 6 9 17 4 12"/>',
+  'ti-checks':'<path d="M7 12l5 5 10-10"/><path d="M2 12l5 5"/>',
+  'ti-alert-triangle':'<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>',
+  'ti-clock-hour-4':'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l2.5 2.5"/>',
+  'ti-clipboard-list':'<path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="12" y2="16"/>',
+  'ti-mail-off':'<path d="M9.5 4h11a2 2 0 0 1 2 2v12"/><path d="M4 6.343A2 2 0 0 0 3 8v10a2 2 0 0 0 2 2h14"/><path d="M3 3l18 18"/><path d="M9 8l-5 3.5"/><path d="M15 12l3.5-2.5"/>',
+  'ti-user-search':'<circle cx="9" cy="8" r="4"/><path d="M3 20v-2a5 5 0 0 1 5-5h2"/><circle cx="17" cy="17" r="3"/><line x1="21" y1="21" x2="19.1" y2="19.1"/>',
+  'ti-arrow-forward':'<polyline points="15 4 19 8 15 12"/><path d="M19 8H9a4 4 0 0 0 0 8h1"/>',
+  'ti-file-off':'<path d="M6 3h8"/><path d="M18 9v7M6 21h12a2 2 0 0 0 2-2V9"/><path d="M3 3l18 18"/><path d="M9 9H6v12"/>',
+  'ti-calendar-due':'<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M12 14v4"/><path d="M10 16h4"/>',
+  'ti-robot':'<rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="9" cy="16" r="1"/><circle cx="15" cy="16" r="1"/><path d="M12 11V7"/><path d="M9 7h6"/>',
+  'ti-pencil':'<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>',
+  'ti-calendar-event':'<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><rect x="8" y="14" width="8" height="4" rx="1"/>',
+  'ti-lock':'<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+  'ti-file-text':'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>',
+  'ti-download':'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>',
+  'ti-cloud-upload':'<polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/>',
+  'ti-paperclip':'<path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>',
+  'ti-note':'<path d="M13 20H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v7"/><path d="M14 20v-5a1 1 0 0 1 1-1h5"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="12" x2="13" y2="12"/>',
+  'ti-arrows-exchange':'<path d="M7 10h14M17 6l4 4-4 4M17 14H3M7 18l-4-4 4-4"/>',
+  'ti-files':'<path d="M15.5 2H8.6c-.4 0-.8.2-1.1.5-.3.3-.5.7-.5 1.1v12.8c0 .9.7 1.6 1.6 1.6h9.8c.9 0 1.6-.7 1.6-1.6V6.5L15.5 2z"/><path d="M3 7.6v12.8c0 .9.7 1.6 1.6 1.6h9.8"/>',
+  'ti-user':'<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+  'ti-send':'<line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>',
+  'ti-device-floppy':'<path d="M6 4h10l4 4v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><circle cx="12" cy="14" r="2"/><path d="M8 4v4h7"/>',
+  'ti-chevron-right':'<polyline points="9 18 15 12 9 6"/>',
+  'ti-chevron-down':'<polyline points="6 9 12 15 18 9"/>',
+  'ti-bell':'<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>',
+  'ti-bell-ringing':'<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/><line x1="12" y1="2" x2="12" y2="5"/>',
+  'ti-alert-circle':'<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>',
+  'ti-question-mark':'<path d="M8 8a4 4 0 1 1 8 0c0 2-2 3-2 5"/><line x1="12" y1="18" x2="12.01" y2="18"/>',
+  'ti-receipt':'<path d="M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16l-3-2-2 2-2-2-2 2-2-2-3 2"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="13" y2="13"/>',
+};
+// Runtime shim: replaces <i class="ti ti-*"> with inline SVGs
+function applyIcons(root){
+  (root||document).querySelectorAll('i[class*="ti-"]').forEach(el=>{
+    const cls=[...el.classList].find(c=>c!=='ti'&&c.startsWith('ti-'));
+    if(!cls)return;
+    const paths=ICONS[cls];
+    if(!paths)return;
+    const sz=parseFloat(getComputedStyle(el).fontSize)||16;
+    const color=getComputedStyle(el).color;
+    const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+    svg.setAttribute('viewBox','0 0 24 24');
+    svg.setAttribute('width',sz);
+    svg.setAttribute('height',sz);
+    svg.style.cssText=`display:inline-block;vertical-align:-0.15em;flex-shrink:0;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round`;
+    svg.innerHTML=paths;
+    const span=document.createElement('span');
+    span.style.cssText=`display:inline-flex;align-items:center;justify-content:center;width:${sz}px;height:${sz}px;flex-shrink:0`;
+    if(el.getAttribute('aria-label'))span.setAttribute('aria-label',el.getAttribute('aria-label'));
+    else span.setAttribute('aria-hidden','true');
+    span.appendChild(svg);
+    el.replaceWith(span);
+  });
+}
+// Observe DOM for dynamically inserted icons (from innerHTML assignments)
+const _obs=new MutationObserver(muts=>{
+  muts.forEach(m=>m.addedNodes.forEach(n=>{
+    if(n.nodeType===1) applyIcons(n);
+  }));
+});
+document.addEventListener('DOMContentLoaded',()=>{
+  applyIcons();
+  _obs.observe(document.body,{childList:true,subtree:true});
+});
+</script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f0ede6;
+  --surface:#faf9f6;
+  --surface2:#f4f2ed;
+  --border:#e2ddd4;
+  --border2:#cdc8bc;
+  --text:#1c1a16;
+  --muted:#7a7568;
+  --faint:#b0aa9e;
+  --accent:#2c4a2e;
+  --accent2:#3d6b40;
+  --accent-bg:#e8f0e8;
+  --amber:#6b4c00;
+  --amber-bg:#fef4dc;
+  --red:#6b1f1f;
+  --red-bg:#fceaea;
+  --blue:#1a3a5c;
+  --blue-bg:#e8eff7;
+  --purple:#3a1a5c;
+  --purple-bg:#f0eaf8;
+  --gold:#7a5c00;
+  --gold-bg:#fdf6dc;
+  --radius:5px;
+  --radius-lg:8px;
+}
+html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);font-size:13px;line-height:1.5}
+.app{display:grid;grid-template-columns:220px 1fr;grid-template-rows:100vh;height:100vh;overflow:hidden}
+
+/* SIDEBAR */
+.sidebar{background:var(--accent);display:flex;flex-direction:column;overflow:hidden}
+.sidebar-brand{padding:22px 18px 18px;border-bottom:1px solid rgba(255,255,255,0.1)}
+.brand-eyebrow{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.16em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:5px}
+.brand-name{font-family:'Fraunces',serif;font-size:22px;font-weight:400;color:#fff;line-height:1.1;font-style:italic}
+.brand-sub{font-size:10px;color:rgba(255,255,255,0.4);margin-top:3px;font-weight:300}
+.nav{flex:1;padding:14px 0;overflow-y:auto}
+.nav-section-label{padding:14px 18px 5px;font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.3);font-weight:500}
+.nav-item{display:flex;align-items:center;gap:9px;padding:9px 18px;cursor:pointer;color:rgba(255,255,255,0.6);font-size:12px;font-weight:400;border-left:2px solid transparent;transition:all 0.15s;position:relative}
+.nav-item:hover{background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.9)}
+.nav-item.active{background:rgba(255,255,255,0.1);color:#fff;border-left-color:#8bc48e}
+.nav-item i{font-size:15px;opacity:0.8}
+.nav-badge{margin-left:auto;background:rgba(255,100,100,0.25);color:#ffaaaa;font-size:9px;font-weight:600;padding:1px 6px;border-radius:10px;font-family:'DM Mono',monospace}
+.sidebar-footer{padding:14px 18px;border-top:1px solid rgba(255,255,255,0.08)}
+.user-row{display:flex;align-items:center;gap:9px}
+.user-avatar{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#fff;font-family:'DM Mono',monospace}
+.user-name{font-size:11px;font-weight:500;color:rgba(255,255,255,0.8)}
+.user-role{font-size:10px;color:rgba(255,255,255,0.35)}
+
+/* MAIN */
+.main{display:flex;flex-direction:column;overflow:hidden;background:var(--bg)}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;height:54px;display:flex;align-items:center;gap:10px;flex-shrink:0}
+.topbar-title{font-family:'Fraunces',serif;font-size:17px;font-weight:400;flex:1;color:var(--text)}
+.topbar-sub{font-size:11px;color:var(--muted);margin-left:2px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 13px;border-radius:var(--radius);cursor:pointer;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;border:1px solid var(--border2);background:var(--surface);color:var(--text);transition:all 0.15s;white-space:nowrap}
+.btn:hover{background:var(--bg);border-color:var(--accent)}
+.btn:active{transform:scale(0.98)}
+.btn i{font-size:14px}
+.btn-primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn-primary:hover{background:var(--accent2)}
+.btn-sm{padding:5px 10px;font-size:11px}
+
+/* CONTENT */
+.content{flex:1;overflow-y:auto;padding:20px 24px}
+
+/* ATTENTION QUEUE */
+.morning-header{margin-bottom:20px}
+.morning-header h1{font-family:'Fraunces',serif;font-size:26px;font-weight:300;color:var(--text);line-height:1.2}
+.morning-header p{font-size:12px;color:var(--muted);margin-top:4px}
+.date-chip{display:inline-block;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:2px 8px;margin-bottom:10px}
+/* PRIORITY GROUPS */
+.pgroup{margin-bottom:22px}
+.pgroup-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;padding:10px 14px;border-radius:var(--radius-lg);border:1px solid transparent}
+.pgroup-header.ph-high{background:#fdf0f0;border-color:#f5c6c6}
+.pgroup-header.ph-med{background:#fef8ec;border-color:#f5e2a8}
+.pgroup-header.ph-low{background:#f4f2ed;border-color:var(--border)}
+.pgroup-icon{width:32px;height:32px;border-radius:var(--radius);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.ph-high .pgroup-icon{background:#fceaea;color:var(--red)}
+.ph-med .pgroup-icon{background:var(--amber-bg);color:var(--amber)}
+.ph-low .pgroup-icon{background:var(--surface2);color:var(--muted)}
+.pgroup-label{flex:1}
+.pgroup-label-title{font-size:13px;font-weight:600;line-height:1.2}
+.ph-high .pgroup-label-title{color:var(--red)}
+.ph-med .pgroup-label-title{color:var(--amber)}
+.ph-low .pgroup-label-title{color:var(--muted)}
+.pgroup-label-sub{font-size:11px;color:var(--muted);margin-top:1px}
+.pgroup-count{font-family:'DM Mono',monospace;font-size:12px;font-weight:600;padding:3px 9px;border-radius:10px}
+.ph-high .pgroup-count{background:#fceaea;color:var(--red)}
+.ph-med .pgroup-count{background:var(--amber-bg);color:var(--amber)}
+.ph-low .pgroup-count{background:var(--surface2);color:var(--muted)}
+.action-cards{display:flex;flex-direction:column;gap:6px}
+.action-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:13px 16px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:all 0.15s}
+.action-card:hover{border-color:var(--border2);box-shadow:0 2px 10px rgba(0,0,0,0.05);transform:translateX(2px)}
+.action-card.ph-high-card{border-left:3px solid var(--red)}
+.action-card.ph-med-card{border-left:3px solid var(--amber)}
+.action-card.ph-low-card{border-left:2px dashed var(--border2)}
+.ac-icon{width:34px;height:34px;border-radius:var(--radius);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.ac-body{flex:1;min-width:0}
+.ac-order{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)}
+.ac-title{font-size:13px;font-weight:500;margin-top:1px}
+.ac-meta{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.block-chip{font-size:10px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;padding:3px 8px;border-radius:3px}
+.bc-vendor-overdue{background:var(--red-bg);color:var(--red)}
+.bc-awaiting-eng{background:var(--amber-bg);color:var(--amber)}
+.bc-eng-replied{background:var(--blue-bg);color:var(--blue)}
+.bc-docs-missing{background:var(--purple-bg);color:var(--purple)}
+.bc-commercial{background:var(--gold-bg);color:var(--gold)}
+.bc-stage-unclear{background:var(--surface2);color:var(--muted);border:1px solid var(--border)}
+.due-chip{display:inline-flex;align-items:center;gap:4px;padding:2px 7px;border-radius:3px;font-size:10px;font-weight:600;font-family:'DM Mono',monospace}
+.due-chip-overdue{background:var(--red-bg);color:var(--red)}
+.due-chip-today{background:var(--amber-bg);color:var(--amber)}
+.due-chip-soon{background:var(--gold-bg);color:var(--gold)}
+.due-chip-ok{background:var(--surface2);color:var(--muted)}
+.due-source{display:inline-flex;align-items:center;gap:3px;font-size:10px;color:var(--faint)}
+.override-btn{padding:4px 7px;border-color:var(--border);color:var(--muted)}
+.override-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+/* ORDERS TABLE */
+.section-header{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+.section-title{font-family:'Fraunces',serif;font-size:18px;font-weight:300}
+.filter-row{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.f-chip{padding:4px 11px;border-radius:20px;font-size:11px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--muted);transition:all 0.15s}
+.f-chip.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.orders-table{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden}
+table{width:100%;border-collapse:collapse}
+thead th{padding:9px 14px;text-align:left;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);background:var(--surface2);border-bottom:1px solid var(--border)}
+tbody td{padding:12px 14px;border-bottom:1px solid var(--border);font-size:12px;vertical-align:middle}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:var(--bg);cursor:pointer}
+.stage-pill{display:inline-flex;align-items:center;gap:5px;padding:4px 9px;border-radius:20px;font-size:10px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase}
+.sp-inquiry{background:var(--purple-bg);color:var(--purple)}
+.sp-eng-review{background:var(--amber-bg);color:var(--amber)}
+.sp-tech-bid{background:var(--blue-bg);color:var(--blue)}
+.sp-tech-approved{background:#e8f5e8;color:#1a5c1a}
+.sp-commercial{background:var(--gold-bg);color:var(--gold)}
+.sp-commercial-closed{background:#e8f0e8;color:var(--accent)}
+.sp-po{background:var(--accent-bg);color:var(--accent)}
+.mini-progress{display:flex;gap:3px;align-items:center}
+.mp-seg{height:4px;flex:1;border-radius:2px;background:var(--border);transition:background 0.3s}
+.mp-seg.done{background:var(--accent2)}
+.mp-seg.current{background:var(--amber)}
+.vendor-pips{display:flex;gap:3px}
+.vp{width:20px;height:20px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;font-family:'DM Mono',monospace}
+.fu-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 7px;border-radius:3px;font-size:10px;font-weight:600}
+.order-id-cell{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)}
+
+/* ORDER DETAIL */
+.detail-view{display:none;flex-direction:column;height:100%;overflow:hidden}
+.detail-view.active{display:flex}
+.detail-topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 24px;flex-shrink:0}
+.detail-back{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);cursor:pointer;margin-bottom:10px;width:fit-content}
+.detail-back:hover{color:var(--accent)}
+.detail-header{display:flex;align-items:flex-start;gap:16px}
+.detail-title-block{flex:1}
+.detail-order-id{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)}
+.detail-title{font-family:'Fraunces',serif;font-size:22px;font-weight:400;line-height:1.2;margin-top:2px}
+.detail-meta{display:flex;align-items:center;gap:10px;margin-top:8px;flex-wrap:wrap}
+.detail-content{flex:1;overflow-y:auto;padding:20px 24px}
+
+/* STAGE STEPPER */
+.stepper{display:flex;align-items:center;gap:0;margin:16px 0}
+.step{display:flex;align-items:center;flex:1;position:relative}
+.step-box{flex:1;padding:8px 6px;text-align:center;font-size:9px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;border:1px solid var(--border);background:var(--surface2);color:var(--faint);cursor:pointer;transition:all 0.2s;position:relative;z-index:1}
+.step:first-child .step-box{border-radius:4px 0 0 4px}
+.step:last-child .step-box{border-radius:0 4px 4px 0}
+.step-box.s-done{background:var(--accent-bg);color:var(--accent);border-color:var(--accent)}
+.step-box.s-current{background:var(--accent);color:#fff;border-color:var(--accent)}
+.step-box.s-current::after{content:'';position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:var(--accent)}
+
+/* TABS */
+.tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:20px;gap:0}
+.tab{padding:9px 16px;cursor:pointer;font-size:12px;font-weight:500;color:var(--muted);border-bottom:2px solid transparent;transition:all 0.15s;margin-bottom:-1px;display:flex;align-items:center;gap:6px}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab i{font-size:14px}
+.tab-count{font-size:10px;font-family:'DM Mono',monospace;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:0 5px}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
+/* VENDOR MATRIX */
+.vendor-matrix{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:16px}
+.vm-header{display:grid;grid-template-columns:160px repeat(6,1fr);gap:0;background:var(--surface2);border-bottom:1px solid var(--border)}
+.vm-header-cell{padding:8px 10px;font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);text-align:center;border-right:1px solid var(--border)}
+.vm-header-cell:first-child{text-align:left}
+.vm-header-cell:last-child{border-right:none}
+.vm-row{display:grid;grid-template-columns:160px repeat(6,1fr);border-bottom:1px solid var(--border);transition:background 0.12s}
+.vm-row:last-child{border-bottom:none}
+.vm-row:hover{background:var(--bg)}
+.vm-cell{padding:11px 10px;text-align:center;border-right:1px solid var(--border);display:flex;align-items:center;justify-content:center}
+.vm-cell:first-child{text-align:left;justify-content:flex-start}
+.vm-cell:last-child{border-right:none}
+.vm-vendor{display:flex;align-items:center;gap:8px}
+.vm-avatar{width:26px;height:26px;border-radius:4px;font-size:9px;font-weight:700;font-family:'DM Mono',monospace;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.vm-name{font-size:12px;font-weight:500}
+.vm-contact{font-size:10px;color:var(--muted)}
+.status-dot{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;cursor:pointer;border:1.5px solid var(--border);background:var(--surface2);transition:all 0.15s}
+.status-dot:hover{transform:scale(1.15)}
+.status-dot.sd-done{background:var(--accent-bg);border-color:var(--accent);color:var(--accent)}
+.status-dot.sd-pending{background:var(--amber-bg);border-color:var(--amber);color:var(--amber)}
+.status-dot.sd-na{background:var(--surface2);border-color:var(--border);color:var(--faint)}
+.status-dot.sd-locked{background:var(--surface2);border-color:var(--border);cursor:not-allowed}
+.locked-cell{position:relative}
+.locked-cell::after{content:'\ea18';font-family:'tabler-icons';font-size:12px;color:var(--faint)}
+
+/* ENGINEER LOG */
+.eng-log{display:flex;flex-direction:column;gap:10px}
+.eng-round{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden}
+.er-header{padding:11px 14px;background:var(--surface2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.er-round-num{font-family:'DM Mono',monospace;font-size:10px;font-weight:500;background:var(--accent);color:#fff;padding:2px 7px;border-radius:3px}
+.er-vendor{font-size:11px;font-weight:500;flex:1}
+.er-engineer{font-size:11px;color:var(--muted)}
+.er-status{font-size:10px;padding:2px 7px;border-radius:3px;font-weight:600}
+.er-open{background:var(--amber-bg);color:var(--amber)}
+.er-closed{background:var(--accent-bg);color:var(--accent)}
+.er-body{padding:12px 14px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.er-section label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);display:block;margin-bottom:4px}
+.er-section p{font-size:12px;color:var(--text);line-height:1.5}
+.er-dates{display:flex;gap:16px;padding:0 14px 12px;border-top:1px solid var(--border);padding-top:10px;margin-top:2px}
+.er-date-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)}
+.er-date-item i{font-size:13px}
+.er-docs{padding:10px 14px;border-top:1px solid var(--border);display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.doc-pill{display:inline-flex;align-items:center;gap:5px;padding:4px 9px;background:var(--blue-bg);border-radius:3px;font-size:11px;color:var(--blue);cursor:pointer}
+.doc-pill i{font-size:12px}
+.add-round-card{background:var(--surface2);border:1.5px dashed var(--border2);border-radius:var(--radius-lg);padding:16px;cursor:pointer;text-align:center;color:var(--muted);font-size:12px;transition:all 0.15s}
+.add-round-card:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-bg)}
+.add-round-card i{font-size:20px;display:block;margin-bottom:4px}
+
+/* FORMS / MODALS */
+.overlay{position:fixed;inset:0;background:rgba(28,26,22,0.5);z-index:200;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(2px)}
+.overlay.hidden{display:none}
+.modal{background:var(--surface);border-radius:10px;border:1px solid var(--border2);width:560px;max-height:85vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,0.2)}
+.modal-head{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.modal-head-title{font-family:'Fraunces',serif;font-size:18px;font-weight:400;flex:1}
+.modal-body{padding:20px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.form-row.full{grid-template-columns:1fr}
+.field label{display:block;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:5px}
+.field input,.field select,.field textarea{width:100%;padding:8px 11px;border:1px solid var(--border2);border-radius:var(--radius);font-size:12px;font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text);outline:none;transition:border 0.15s}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(44,74,46,0.08)}
+.field textarea{resize:vertical;line-height:1.5}
+.field select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%237a7568' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:26px}
+.upload-zone{border:1.5px dashed var(--border2);border-radius:var(--radius);padding:14px;text-align:center;cursor:pointer;font-size:12px;color:var(--muted);transition:all 0.15s;margin-top:6px}
+.upload-zone:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-bg)}
+.upload-zone i{font-size:18px;display:block;margin-bottom:3px}
+.modal-footer{padding:14px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px}
+.divider{height:1px;background:var(--border);margin:16px 0}
+input[type=file]{display:none}
+
+/* MISC UTILS */
+.hidden{display:none!important}
+.empty-state{text-align:center;padding:40px;color:var(--muted)}
+.empty-state i{font-size:32px;display:block;margin-bottom:8px;color:var(--faint)}
+.tag{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:3px;font-size:10px;font-weight:600}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-eyebrow">Procurement</div>
+      <div class="brand-name">ProcureFlow</div>
+      <div class="brand-sub">Workflow Tracker v1.0</div>
+    </div>
+    <nav class="nav">
+      <div class="nav-section-label">Workspace</div>
+      <div class="nav-item active" onclick="navTo('queue',this)"><i class="ti ti-inbox"></i> Action Queue <span class="nav-badge" id="queue-count">4</span></div>
+      <div class="nav-item" onclick="navTo('orders',this)"><i class="ti ti-list-check"></i> All Orders</div>
+      <div class="nav-section-label" style="margin-top:8px">Views</div>
+      <div class="nav-item" onclick="navTo('vendors',this)"><i class="ti ti-building-store"></i> Vendors</div>
+      <div class="nav-item" onclick="navTo('activity',this)"><i class="ti ti-history"></i> Activity Log</div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-row">
+        <div class="user-avatar">PM</div>
+        <div>
+          <div class="user-name">Procurement Manager</div>
+          <div class="user-role">Full access</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN AREA -->
+  <main class="main">
+    <div class="topbar">
+      <div class="topbar-title" id="topbar-title">Action Queue <span class="topbar-sub">— good morning</span></div>
+      <button class="btn btn-sm" onclick="openNewOrderModal()"><i class="ti ti-plus"></i> New Order</button>
+      <button class="btn btn-sm btn-primary"><i class="ti ti-refresh"></i> Refresh</button>
+    </div>
+
+    <div class="content" id="main-content">
+
+      <!-- VIEW: ACTION QUEUE -->
+      <div id="view-queue">
+        <div class="morning-header">
+          <div class="date-chip" id="today-date"></div>
+          <h1>Here's what needs<br>your attention today</h1>
+          <p id="queue-summary"></p>
+        </div>
+        <div class="action-cards" id="action-queue-list"></div>
+      </div>
+
+      <!-- VIEW: ALL ORDERS -->
+      <div id="view-orders" class="hidden">
+        <div class="section-header">
+          <div class="section-title">All Orders</div>
+          <button class="btn btn-sm" style="margin-left:auto" onclick="openNewOrderModal()"><i class="ti ti-plus"></i> New Order</button>
+        </div>
+        <div class="filter-row" id="filter-row">
+          <div class="f-chip active" onclick="filterOrders('all',this)">All</div>
+          <div class="f-chip" onclick="filterOrders('Inquiry',this)">Inquiry</div>
+          <div class="f-chip" onclick="filterOrders('Engineering Review',this)">Eng. Review</div>
+          <div class="f-chip" onclick="filterOrders('Technical Bid Assessment',this)">Tech Bid</div>
+          <div class="f-chip" onclick="filterOrders('Technical Bid Approved',this)">Tech Approved</div>
+          <div class="f-chip" onclick="filterOrders('Commercial Assessment',this)">Commercial</div>
+          <div class="f-chip" onclick="filterOrders('PO Awarded',this)">PO Awarded</div>
+        </div>
+        <div class="orders-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Item / Equipment</th>
+                <th>Stage</th>
+                <th>Vendors</th>
+                <th>Progress</th>
+                <th>Follow-ups</th>
+                <th>Last Activity</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="orders-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- VIEW: VENDORS -->
+      <div id="view-vendors" class="hidden">
+        <div class="section-header"><div class="section-title">Vendor Directory</div></div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px" id="vendors-grid"></div>
+      </div>
+
+      <!-- VIEW: ACTIVITY -->
+      <div id="view-activity" class="hidden">
+        <div class="section-header"><div class="section-title">Activity Log</div></div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden">
+          <div id="activity-list" style="padding:4px 0"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- DETAIL VIEW (full replace) -->
+    <div id="detail-view" class="detail-view" style="overflow:hidden;flex:1">
+      <div class="detail-topbar">
+        <div class="detail-back" onclick="closeDetail()"><i class="ti ti-arrow-left"></i> Back to orders</div>
+        <div class="detail-header">
+          <div class="detail-title-block">
+            <div class="detail-order-id" id="d-order-id"></div>
+            <div class="detail-title" id="d-order-title"></div>
+            <div class="detail-meta" id="d-order-meta"></div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:flex-start;margin-top:4px">
+            <button class="btn btn-sm" onclick="openAdvanceStageModal()"><i class="ti ti-arrow-right"></i> Advance Stage</button>
+            <button class="btn btn-sm btn-primary" onclick="openLogRoundModal()"><i class="ti ti-plus"></i> Log Eng. Round</button>
+          </div>
+        </div>
+        <!-- Stage stepper -->
+        <div class="stepper" id="d-stepper"></div>
+      </div>
+      <div class="detail-content">
+        <div class="tabs" id="detail-tabs">
+          <div class="tab active" onclick="switchTab(this,'dtab-vendors')"><i class="ti ti-building-store"></i> Vendors <span class="tab-count" id="tc-vendors">0</span></div>
+          <div class="tab" onclick="switchTab(this,'dtab-englog')"><i class="ti ti-arrows-exchange"></i> Eng. Loop Log <span class="tab-count" id="tc-englog">0</span></div>
+          <div class="tab" onclick="switchTab(this,'dtab-docs')"><i class="ti ti-files"></i> Documents <span class="tab-count" id="tc-docs">0</span></div>
+          <div class="tab" onclick="switchTab(this,'dtab-notes')"><i class="ti ti-note"></i> Notes</div>
+        </div>
+        <!-- TAB: VENDORS -->
+        <div class="tab-panel active" id="dtab-vendors">
+          <div class="vendor-matrix" id="vendor-matrix-wrap">
+            <div class="vm-header">
+              <div class="vm-header-cell">Vendor</div>
+              <div class="vm-header-cell">Contacted</div>
+              <div class="vm-header-cell">Responded</div>
+              <div class="vm-header-cell">Docs to Eng.</div>
+              <div class="vm-header-cell">Eng. Feedback</div>
+              <div class="vm-header-cell">Tech Cleared</div>
+              <div class="vm-header-cell">Price <i class="ti ti-lock" style="font-size:10px"></i></div>
+            </div>
+            <div id="vendor-matrix-rows"></div>
+          </div>
+          <button class="btn btn-sm" onclick="openAddVendorModal()"><i class="ti ti-plus"></i> Add vendor to order</button>
+        </div>
+        <!-- TAB: ENG LOOP -->
+        <div class="tab-panel" id="dtab-englog">
+          <div class="eng-log" id="eng-log-list"></div>
+          <div class="add-round-card" onclick="openLogRoundModal()" style="margin-top:10px">
+            <i class="ti ti-plus"></i>
+            Log a new engineering round
+          </div>
+        </div>
+        <!-- TAB: DOCS -->
+        <div class="tab-panel" id="dtab-docs">
+          <div id="docs-by-stage"></div>
+          <div class="upload-zone" onclick="document.getElementById('doc-upload').click()">
+            <i class="ti ti-cloud-upload"></i>
+            Click to upload a document to this order
+          </div>
+          <input type="file" id="doc-upload" onchange="handleDocUpload(event)">
+        </div>
+        <!-- TAB: NOTES -->
+        <div class="tab-panel" id="dtab-notes">
+          <div style="margin-bottom:12px">
+            <div class="field">
+              <label>Add note</label>
+              <textarea rows="4" id="note-input" placeholder="Internal notes — visible to procurement only..."></textarea>
+            </div>
+            <button class="btn btn-sm btn-primary" style="margin-top:8px" onclick="saveNote()"><i class="ti ti-check"></i> Save note</button>
+          </div>
+          <div id="notes-list"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- MODAL: NEW ORDER -->
+<div class="overlay hidden" id="modal-new-order">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-head-title">New Procurement Order</div>
+      <button class="btn btn-sm" onclick="closeModal('modal-new-order')"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="field"><label>Item / Equipment Name</label><input type="text" id="no-item" placeholder="e.g. CNC Lathe Machine"></div>
+        <div class="field"><label>Category</label><select id="no-category"><option>Machinery</option><option>Electronics</option><option>Raw Materials</option><option>Tooling</option><option>Consumables</option></select></div>
+      </div>
+      <div class="form-row">
+        <div class="field"><label>Priority</label><select id="no-priority"><option value="high">High</option><option value="med" selected>Medium</option><option value="low">Low</option></select></div>
+        <div class="field"><label>Required By</label><input type="date" id="no-date"></div>
+      </div>
+      <div class="form-row full"><div class="field"><label>Technical Requirements / Notes</label><textarea rows="3" id="no-notes" placeholder="Specs, quantities, constraints..."></textarea></div></div>
+      <div class="divider"></div>
+      <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:8px">Vendors to contact</div>
+      <div id="new-vendor-chips" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px"></div>
+      <div class="field"><label>Add vendor</label>
+        <select onchange="addNewVendorChip(this)">
+          <option value="">— select —</option>
+          <option value="AlphaTech">AlphaTech Machinery</option>
+          <option value="PrecisionCo">PrecisionCo Ltd</option>
+          <option value="GlobalMfg">Global Manufacturing</option>
+          <option value="TechForge">TechForge Industries</option>
+          <option value="BetaMachines">Beta Machines Ltd</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('modal-new-order')">Cancel</button>
+      <button class="btn btn-primary" onclick="createOrder()"><i class="ti ti-plus"></i> Create Order</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: LOG ENG ROUND -->
+<div class="overlay hidden" id="modal-log-round">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-head-title">Log Engineering Round</div>
+      <button class="btn btn-sm" onclick="closeModal('modal-log-round')"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="field"><label>Vendor</label><select id="lr-vendor"></select></div>
+        <div class="field"><label>Engineer Name</label><input type="text" id="lr-engineer" placeholder="e.g. Eng. Sharma"></div>
+      </div>
+      <div class="form-row">
+        <div class="field"><label>Date Sent to Engineer</label><input type="date" id="lr-sent"></div>
+        <div class="field"><label>Date Received from Engineer</label><input type="date" id="lr-received" placeholder="Leave blank if pending"></div>
+      </div>
+      <div class="form-row full"><div class="field"><label>What was sent / request summary</label><textarea rows="2" id="lr-request" placeholder="Describe what was sent to engineering for review..."></textarea></div></div>
+      <div class="form-row full"><div class="field"><label>Engineering response summary</label><textarea rows="2" id="lr-response" placeholder="Leave blank if response not received yet..."></textarea></div></div>
+      <div class="form-row">
+        <div class="field"><label>Status</label><select id="lr-status"><option value="open">Open — awaiting response</option><option value="closed">Closed — response received</option></select></div>
+        <div class="field"><label>Attach document</label>
+          <div class="upload-zone" onclick="document.getElementById('lr-doc').click()" style="padding:8px;margin-top:0">
+            <i class="ti ti-paperclip" style="font-size:14px;display:inline;margin-right:4px"></i><span id="lr-doc-name">Click to attach</span>
+          </div>
+          <input type="file" id="lr-doc" onchange="document.getElementById('lr-doc-name').textContent=this.files[0]?.name||'Click to attach'">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('modal-log-round')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveRound()"><i class="ti ti-device-floppy"></i> Save Round</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: ADVANCE STAGE -->
+<div class="overlay hidden" id="modal-advance">
+  <div class="modal" style="width:420px">
+    <div class="modal-head">
+      <div class="modal-head-title">Advance Stage</div>
+      <button class="btn btn-sm" onclick="closeModal('modal-advance')"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="field" style="margin-bottom:14px"><label>New Stage</label>
+        <select id="adv-stage">
+          <option value="Inquiry">Inquiry</option>
+          <option value="Engineering Review">Engineering Review</option>
+          <option value="Technical Bid Assessment">Technical Bid Assessment</option>
+          <option value="Technical Bid Approved">Technical Bid Approved</option>
+          <option value="Commercial Assessment">Commercial Assessment</option>
+          <option value="Commercial Closed">Commercial Closed</option>
+          <option value="PO Awarded">PO Awarded</option>
+        </select>
+      </div>
+      <div class="field" style="margin-bottom:14px"><label>Awarded Vendor (if PO stage)</label>
+        <select id="adv-vendor"><option value="">— Not yet awarded —</option></select>
+      </div>
+      <div class="field"><label>Note</label><textarea rows="2" id="adv-note" placeholder="What changed?"></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('modal-advance')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveAdvanceStage()"><i class="ti ti-check"></i> Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── DATA ─────────────────────────────────────────────────────────────────────
+const STAGES = ['Inquiry','Engineering Review','Technical Bid Assessment','Technical Bid Approved','Commercial Assessment','Commercial Closed','PO Awarded'];
+const STAGE_CLASS = {
+  'Inquiry':'sp-inquiry','Engineering Review':'sp-eng-review',
+  'Technical Bid Assessment':'sp-tech-bid','Technical Bid Approved':'sp-tech-approved',
+  'Commercial Assessment':'sp-commercial','Commercial Closed':'sp-commercial-closed',
+  'PO Awarded':'sp-po'
+};
+const V_COLORS = [['#1a3a5c','#e8eff7'],['#2c4a2e','#e8f0e8'],['#6b4c00','#fef4dc'],['#3a1a5c','#f0eaf8'],['#5c1a1a','#fceaea']];
+
+const vendorDB = {
+  AlphaTech:{name:'AlphaTech Machinery',contact:'rajesh@alphatech.com',phone:'+91 98200 11223'},
+  PrecisionCo:{name:'PrecisionCo Ltd',contact:'sales@precisionco.com',phone:'+91 22 4001 5678'},
+  GlobalMfg:{name:'Global Manufacturing',contact:'enquiry@globalmfg.com',phone:'+91 80 2345 6789'},
+  TechForge:{name:'TechForge Industries',contact:'bids@techforge.com',phone:'+91 44 3001 2233'},
+  BetaMachines:{name:'Beta Machines Ltd',contact:'info@betamachines.com',phone:'+91 20 4567 8901'},
+};
+
+// ─── FOLLOW-UP TIMER CONFIG (business days) ───────────────────────────────────
+const FOLLOWUP_DEFAULTS = {
+  vendorInquiry: 5,      // days before flagging no vendor response
+  docsToEng: 3,          // days before flagging docs not sent to eng after vendor responded
+  engFeedback: 3,        // days before flagging open eng round as overdue
+  notForwarded: 2,       // days before flagging eng response not forwarded to vendor
+};
+
+function addDays(dateStr, days){
+  const d = new Date(dateStr);
+  d.setDate(d.getDate() + days);
+  return d;
+}
+function today(){ return new Date(); }
+function daysAgo(n){ const d=new Date(); d.setDate(d.getDate()-n); return d.toISOString().slice(0,10); }
+function isOverdue(dateStr, thresholdDays, overrideDue){
+  if(!dateStr) return false;
+  const due = overrideDue ? new Date(overrideDue) : addDays(dateStr, thresholdDays);
+  return today() > due;
+}
+function daysOverdue(dateStr, thresholdDays, overrideDue){
+  if(!dateStr) return 0;
+  const due = overrideDue ? new Date(overrideDue) : addDays(dateStr, thresholdDays);
+  return Math.max(0, Math.floor((today()-due)/(1000*60*60*24)));
+}
+function daysUntilDue(dateStr, thresholdDays, overrideDue){
+  if(!dateStr) return null;
+  const due = overrideDue ? new Date(overrideDue) : addDays(dateStr, thresholdDays);
+  return Math.ceil((due-today())/(1000*60*60*24));
+}
+function fmtDueLabel(dateStr, thresholdDays, overrideDue){
+  const over = daysOverdue(dateStr, thresholdDays, overrideDue);
+  const until = daysUntilDue(dateStr, thresholdDays, overrideDue);
+  if(over > 0) return {label:`${over}d overdue`, cls:'due-overdue'};
+  if(until === 0) return {label:'Due today', cls:'due-today'};
+  if(until === 1) return {label:'Due tomorrow', cls:'due-soon'};
+  if(until <= 3) return {label:`Due in ${until}d`, cls:'due-soon'};
+  return {label:`Due in ${until}d`, cls:'due-ok'};
+}
+
+let orders = [
+  {id:'ORD-001',item:'CNC Machining Center',category:'Machinery',stage:'Commercial Assessment',priority:'high',
+   vendors:['AlphaTech','PrecisionCo','GlobalMfg'],awardedVendor:'',lastActivity:'Today, 9:41 AM',
+   vendorStatus:{
+     AlphaTech:{contacted:true,contactedDate:daysAgo(14),responded:true,respondedDate:daysAgo(10),docsToEng:true,docsToEngDate:daysAgo(9),engFeedback:true,engFeedbackDate:daysAgo(5),techCleared:true,overrideDue:{}},
+     PrecisionCo:{contacted:true,contactedDate:daysAgo(12),responded:true,respondedDate:daysAgo(8),docsToEng:true,docsToEngDate:daysAgo(7),engFeedback:false,engFeedbackDate:null,techCleared:false,overrideDue:{}},
+     GlobalMfg:{contacted:true,contactedDate:daysAgo(7),responded:false,respondedDate:null,docsToEng:false,docsToEngDate:null,engFeedback:false,engFeedbackDate:null,techCleared:false,overrideDue:{}},
+   },
+   engRounds:[
+     {round:1,vendor:'AlphaTech',engineer:'Eng. Sharma',sent:'2025-01-10',received:'2025-01-14',
+      request:'Technical spec review of 5-axis CNC spindle speed and tolerance specs.',
+      response:'Specs acceptable. Spindle speed meets requirement. Recommend requesting updated drawings.',
+      status:'closed',docs:['AlphaTech_Spec_Review.pdf']},
+     {round:2,vendor:'AlphaTech',engineer:'Eng. Sharma',sent:'2025-01-18',received:'2025-01-22',
+      request:'Revised drawings received from vendor — review requested.',
+      response:'Drawings cleared. Technically approved.',
+      status:'closed',docs:['AlphaTech_Revised_Drawings.pdf','Eng_Clearance.pdf']},
+     {round:1,vendor:'PrecisionCo',engineer:'Eng. Rajan',sent:'2025-01-20',received:'',
+      request:'Initial spec sheet sent for review. Motor rating and bed size to be confirmed.',
+      response:'',status:'open',docs:['PrecisionCo_Spec.pdf']},
+   ],
+   docs:[{name:'RFQ_AlphaTech.pdf',stage:'Inquiry',date:'Jan 5'},{name:'AlphaTech_Quote_v1.pdf',stage:'Inquiry',date:'Jan 9'},{name:'AlphaTech_Eng_Clearance.pdf',stage:'Engineering Review',date:'Jan 22'}],
+   notes:[{text:'Waiting on PrecisionCo engineer feedback before moving to commercial.',date:'Jan 23, 10:00 AM'}],
+  },
+  {id:'ORD-002',item:'Industrial Hydraulic Press',category:'Machinery',stage:'Engineering Review',priority:'med',
+   vendors:['TechForge','BetaMachines'],awardedVendor:'',lastActivity:'Yesterday',
+   vendorStatus:{
+     TechForge:{contacted:true,contactedDate:daysAgo(10),responded:true,respondedDate:daysAgo(6),docsToEng:true,docsToEngDate:daysAgo(5),engFeedback:false,engFeedbackDate:null,techCleared:false,overrideDue:{}},
+     BetaMachines:{contacted:true,contactedDate:daysAgo(10),responded:true,respondedDate:daysAgo(4),docsToEng:false,docsToEngDate:null,engFeedback:false,engFeedbackDate:null,techCleared:false,overrideDue:{}},
+   },
+   engRounds:[
+     {round:1,vendor:'TechForge',engineer:'Eng. Verma',sent:'2025-01-21',received:'',
+      request:'Hydraulic cylinder pressure rating and stroke length review.',
+      response:'',status:'open',docs:['TechForge_HydraulicSpec.pdf']},
+   ],
+   docs:[{name:'RFQ_HydraulicPress.pdf',stage:'Inquiry',date:'Jan 15'},{name:'TechForge_Quote.pdf',stage:'Inquiry',date:'Jan 20'}],
+   notes:[],
+  },
+  {id:'ORD-003',item:'Precision Lathe × 2 Units',category:'Machinery',stage:'Inquiry',priority:'high',
+   vendors:['AlphaTech','TechForge'],awardedVendor:'',lastActivity:'3 days ago',
+   vendorStatus:{
+     AlphaTech:{contacted:true,contactedDate:daysAgo(8),responded:false,respondedDate:null,docsToEng:false,docsToEngDate:null,engFeedback:false,engFeedbackDate:null,techCleared:false,overrideDue:{}},
+     TechForge:{contacted:true,contactedDate:daysAgo(6),responded:false,respondedDate:null,docsToEng:false,docsToEngDate:null,engFeedback:false,engFeedbackDate:null,techCleared:false,overrideDue:{}},
+   },
+   engRounds:[],
+   docs:[],notes:[],
+  },
+  {id:'ORD-004',item:'Welding Robot Arm',category:'Machinery',stage:'PO Awarded',priority:'low',
+   vendors:['PrecisionCo'],awardedVendor:'PrecisionCo',lastActivity:'Last week',
+   vendorStatus:{
+     PrecisionCo:{contacted:true,contactedDate:daysAgo(30),responded:true,respondedDate:daysAgo(26),docsToEng:true,docsToEngDate:daysAgo(25),engFeedback:true,engFeedbackDate:daysAgo(21),techCleared:true,overrideDue:{}},
+   },
+   engRounds:[
+     {round:1,vendor:'PrecisionCo',engineer:'Eng. Sharma',sent:'2024-12-10',received:'2024-12-14',
+      request:'Welding arm reach, payload, and IP rating check.',
+      response:'All specs cleared. IP65 confirmed. Technically approved.',
+      status:'closed',docs:['WeldingRobot_EngClearance.pdf']},
+   ],
+   docs:[{name:'PO_PrecisionCo.pdf',stage:'PO Awarded',date:'Jan 10'},{name:'Final_Quote.pdf',stage:'Commercial Assessment',date:'Jan 5'}],
+   notes:[{text:'PO issued. Delivery expected in 8 weeks.',date:'Jan 10, 3:15 PM'}],
+  },
+];
+
+let activities = [
+  {text:'PO awarded to PrecisionCo',order:'ORD-004',time:'Last week',color:'var(--accent)'},
+  {text:'Engineering round 2 cleared for AlphaTech',order:'ORD-001',time:'Jan 22',color:'var(--blue)'},
+  {text:'TechForge spec sent to Eng. Verma',order:'ORD-002',time:'Jan 21',color:'var(--amber)'},
+  {text:'Inquiry sent to AlphaTech and TechForge',order:'ORD-003',time:'3 days ago',color:'var(--purple)'},
+  {text:'PrecisionCo engineering round open',order:'ORD-001',time:'Jan 20',color:'var(--amber)'},
+];
+
+let currentOrderId = null;
+let newOrderVendors = [];
+let activeFilter = 'all';
+
+// ─── HELPERS ──────────────────────────────────────────────────────────────────
+function vi(key,i){i=i||0;const c=V_COLORS[i%V_COLORS.length];return`<div class="vm-avatar" style="background:${c[1]};color:${c[0]}">${key.slice(0,2).toUpperCase()}</div>`}
+function vip(key,i){i=i||0;const c=V_COLORS[i%V_COLORS.length];return`<div class="vp" style="background:${c[1]};color:${c[0]}">${key.slice(0,2).toUpperCase()}</div>`}
+function stageIdx(s){return STAGES.indexOf(s)}
+function stagePill(s){return`<span class="stage-pill ${STAGE_CLASS[s]||'sp-inquiry'}">${s}</span>`}
+function fmtDate(d){if(!d)return'<span style="color:var(--faint)">—</span>';const dt=new Date(d);return dt.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}
+function dot(state){
+  if(state===true)return`<div class="status-dot sd-done"><i class="ti ti-check"></i></div>`;
+  if(state==='pending')return`<div class="status-dot sd-pending"><i class="ti ti-clock"></i></div>`;
+  return`<div class="status-dot sd-na"></div>`;
+}
+
+// ─── NAVIGATION ───────────────────────────────────────────────────────────────
+function navTo(view,el){
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  if(el)el.classList.add('active');
+  closeDetail();
+  ['queue','orders','vendors','activity'].forEach(v=>{
+    document.getElementById('view-'+v).classList.toggle('hidden',v!==view);
+  });
+  const titles={queue:'Action Queue',orders:'All Orders',vendors:'Vendor Directory',activity:'Activity Log'};
+  document.getElementById('topbar-title').innerHTML=`${titles[view]||view}`;
+  if(view==='queue')renderQueue();
+  if(view==='orders')renderOrders();
+  if(view==='vendors')renderVendors();
+  if(view==='activity')renderActivity();
+}
+
+// ─── ACTION QUEUE ─────────────────────────────────────────────────────────────
+function buildActions(){
+  const actions=[];
+  orders.forEach(o=>{
+    const si=stageIdx(o.stage);
+    o.vendors.forEach(v=>{
+      const vs=o.vendorStatus[v]||{};
+      const od=vs.overrideDue||{};
+
+      // Vendor hasn't replied — check against contactedDate + threshold
+      if(vs.contacted && !vs.responded && vs.contactedDate){
+        const over=isOverdue(vs.contactedDate, FOLLOWUP_DEFAULTS.vendorInquiry, od.vendorInquiry);
+        const due=fmtDueLabel(vs.contactedDate, FOLLOWUP_DEFAULTS.vendorInquiry, od.vendorInquiry);
+        actions.push({
+          priority:'high', order:o.id, item:o.item,
+          block:'bc-vendor-overdue', blockLabel:'No vendor reply',
+          desc:`${vendorDB[v]?.name||v} has not responded to inquiry`,
+          vendor:v, orderId:o.id,
+          contactedDate:vs.contactedDate,
+          dueLabel:due, isOverdue:over,
+          overrideKey:'vendorInquiry', overrideField:`${o.id}||${v}||vendorInquiry`,
+          currentOverride:od.vendorInquiry||'',
+          autoDate: addDays(vs.contactedDate,FOLLOWUP_DEFAULTS.vendorInquiry).toISOString().slice(0,10),
+        });
+      }
+
+      // Vendor responded but docs not sent to engineer yet
+      if(vs.responded && !vs.docsToEng && vs.respondedDate && si>=1){
+        const over=isOverdue(vs.respondedDate, FOLLOWUP_DEFAULTS.docsToEng, od.docsToEng);
+        const due=fmtDueLabel(vs.respondedDate, FOLLOWUP_DEFAULTS.docsToEng, od.docsToEng);
+        actions.push({
+          priority: over?'high':'med', order:o.id, item:o.item,
+          block:'bc-eng-replied', blockLabel:'Docs not sent to eng.',
+          desc:`${vendorDB[v]?.name||v} responded — forward docs to engineering`,
+          vendor:v, orderId:o.id,
+          contactedDate:vs.respondedDate,
+          dueLabel:due, isOverdue:over,
+          overrideKey:'docsToEng', overrideField:`${o.id}||${v}||docsToEng`,
+          currentOverride:od.docsToEng||'',
+          autoDate: addDays(vs.respondedDate,FOLLOWUP_DEFAULTS.docsToEng).toISOString().slice(0,10),
+        });
+      }
+    });
+
+    // Open engineering rounds
+    o.engRounds.filter(r=>r.status==='open').forEach(r=>{
+      const vs=o.vendorStatus[r.vendor]||{};
+      const od=vs.overrideDue||{};
+      const over=isOverdue(r.sent, FOLLOWUP_DEFAULTS.engFeedback, od.engFeedback);
+      const due=fmtDueLabel(r.sent, FOLLOWUP_DEFAULTS.engFeedback, od.engFeedback);
+      actions.push({
+        priority: over?'high':'med', order:o.id, item:o.item,
+        block:'bc-awaiting-eng', blockLabel:'Awaiting engineer',
+        desc:`Round ${r.round} — ${r.engineer} · ${vendorDB[r.vendor]?.name||r.vendor}`,
+        vendor:r.vendor, orderId:o.id,
+        contactedDate:r.sent,
+        dueLabel:due, isOverdue:over,
+        overrideField:`${o.id}||${r.vendor}||engFeedback`,
+        currentOverride:od.engFeedback||'',
+        autoDate: addDays(r.sent,FOLLOWUP_DEFAULTS.engFeedback).toISOString().slice(0,10),
+      });
+    });
+
+    // Docs missing
+    if(o.docs.length===0 && si>0){
+      actions.push({
+        priority:'low', order:o.id, item:o.item,
+        block:'bc-docs-missing', blockLabel:'Docs missing',
+        desc:`No documents uploaded for any stage — attach relevant files`,
+        vendor:'', orderId:o.id, dueLabel:{label:'No deadline set',cls:'due-ok'}, isOverdue:false,
+        overrideField:'', currentOverride:'', autoDate:'',
+      });
+    }
+  });
+
+  // Sort: overdue high first, then by due date
+  return actions.sort((a,b)=>{
+    const pa={high:0,med:1,low:2}[a.priority];
+    const pb={high:0,med:1,low:2}[b.priority];
+    if(pa!==pb)return pa-pb;
+    if(a.isOverdue&&!b.isOverdue)return -1;
+    if(!a.isOverdue&&b.isOverdue)return 1;
+    return 0;
+  });
+}
+
+function renderQueue(){
+  const actions=buildActions();
+  const list=document.getElementById('action-queue-list');
+  document.getElementById('queue-count').textContent=actions.length;
+  const hi=actions.filter(a=>a.priority==='high').length;
+  const med=actions.filter(a=>a.priority==='med').length;
+  const lo=actions.filter(a=>a.priority==='low').length;
+  document.getElementById('queue-summary').textContent=`${hi} need immediate action · ${med} waiting on others · ${lo} housekeeping`;
+  if(!actions.length){list.innerHTML=`<div class="empty-state"><i class="ti ti-checks"></i>All clear — no pending actions</div>`;return;}
+
+  const iconMap={'bc-vendor-overdue':'ti-mail-off','bc-awaiting-eng':'ti-user-search','bc-eng-replied':'ti-arrow-forward','bc-docs-missing':'ti-file-off'};
+  const bgMap={'bc-vendor-overdue':'var(--red-bg)','bc-awaiting-eng':'var(--amber-bg)','bc-eng-replied':'var(--blue-bg)','bc-docs-missing':'var(--purple-bg)'};
+  const colMap={'bc-vendor-overdue':'var(--red)','bc-awaiting-eng':'var(--amber)','bc-eng-replied':'var(--blue)','bc-docs-missing':'var(--purple)'};
+
+  const groups=[
+    {key:'high',phClass:'ph-high',cardClass:'ph-high-card',icon:'ti-alert-triangle',
+     title:'Act now — your move',sub:'Vendor gone silent or deadline passed. Only you can unblock these.',
+     items:actions.filter(a=>a.priority==='high')},
+    {key:'med',phClass:'ph-med',cardClass:'ph-med-card',icon:'ti-clock-hour-4',
+     title:'Waiting on others — follow up if overdue',sub:'Ball is in engineering\'s or vendor\'s court. Chase if delayed.',
+     items:actions.filter(a=>a.priority==='med')},
+    {key:'low',phClass:'ph-low',cardClass:'ph-low-card',icon:'ti-clipboard-list',
+     title:'Housekeeping — do when you have time',sub:'Won\'t block deals today but will cause problems later.',
+     items:actions.filter(a=>a.priority==='low')},
+  ];
+
+  let delay=0;
+  list.innerHTML=groups.filter(g=>g.items.length>0).map(g=>`
+    <div class="pgroup">
+      <div class="pgroup-header ${g.phClass}">
+        <div class="pgroup-icon"><i class="ti ${g.icon}"></i></div>
+        <div class="pgroup-label">
+          <div class="pgroup-label-title">${g.title}</div>
+          <div class="pgroup-label-sub">${g.sub}</div>
+        </div>
+        <span class="pgroup-count">${g.items.length}</span>
+      </div>
+      <div class="action-cards">
+        ${g.items.map((a)=>{
+          const d=delay++;
+          const dueCls={'due-overdue':'due-chip-overdue','due-today':'due-chip-today','due-soon':'due-chip-soon','due-ok':'due-chip-ok'}[a.dueLabel.cls]||'due-chip-ok';
+          const autoInfo=a.autoDate?`Auto-flagged after ${a.autoDate<=new Date().toISOString().slice(0,10)?'passing':'reaching'} ${a.autoDate}`:'';
+          return`<div class="action-card ${g.cardClass}" style="animation:fadeUp 0.2s ease both;animation-delay:${d*45}ms">
+            <div class="ac-icon" style="background:${bgMap[a.block]||'var(--surface2)'};color:${colMap[a.block]||'var(--muted)'}"><i class="ti ${iconMap[a.block]||'ti-alert-circle'}"></i></div>
+            <div class="ac-body" onclick="openDetail('${a.orderId}')" style="cursor:pointer">
+              <div class="ac-order">${a.order} · ${a.item}</div>
+              <div class="ac-title">${a.desc}</div>
+              <div style="display:flex;align-items:center;gap:6px;margin-top:5px">
+                <span class="due-chip ${dueCls}"><i class="ti ti-calendar-due" style="font-size:10px"></i> ${a.dueLabel.label}</span>
+                ${a.autoDate?`<span class="due-source" title="${autoInfo}"><i class="ti ti-robot" style="font-size:10px"></i> Auto · Follow up by ${a.currentOverride||a.autoDate}</span>`:''}
+                ${a.currentOverride?`<span class="due-source" style="color:var(--accent)"><i class="ti ti-pencil" style="font-size:10px"></i> Overridden</span>`:''}
+              </div>
+            </div>
+            <div class="ac-meta">
+              <span class="block-chip ${a.block}">${a.blockLabel}</span>
+              ${a.overrideField?`<button class="btn btn-sm override-btn" title="Override follow-up date" onclick="openOverride('${a.overrideField}','${a.currentOverride||a.autoDate}','${a.desc.replace(/'/g,'')}')"><i class="ti ti-calendar-event"></i></button>`:''}
+              <i class="ti ti-chevron-right" style="color:var(--faint)" onclick="openDetail('${a.orderId}')" style="cursor:pointer"></i>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`).join('');
+}
+
+// ─── OVERRIDE DATE MODAL ───────────────────────────────────────────────────────
+let pendingOverrideField='';
+function openOverride(field, currentDate, desc){
+  pendingOverrideField=field;
+  document.getElementById('ov-desc').textContent=desc;
+  document.getElementById('ov-date').value=currentDate||'';
+  document.getElementById('ov-auto-info').textContent=currentDate?`System auto-set follow-up to ${currentDate}`:'No auto date set';
+  document.getElementById('modal-override').classList.remove('hidden');
+}
+function saveOverride(){
+  const [orderId,vendor,key]=pendingOverrideField.split('||');
+  const newDate=document.getElementById('ov-date').value;
+  const o=orders.find(x=>x.id===orderId);
+  if(!o||!vendor)return;
+  if(!o.vendorStatus[vendor])o.vendorStatus[vendor]={overrideDue:{}};
+  if(!o.vendorStatus[vendor].overrideDue)o.vendorStatus[vendor].overrideDue={};
+  o.vendorStatus[vendor].overrideDue[key]=newDate;
+  activities.unshift({text:`Follow-up date overridden: ${key} for ${vendorDB[vendor]?.name||vendor} → ${newDate}`,order:orderId,time:'Just now',color:'var(--accent)'});
+  closeModal('modal-override');
+  renderQueue();
+}
+function clearOverride(){
+  const [orderId,vendor,key]=pendingOverrideField.split('||');
+  const o=orders.find(x=>x.id===orderId);
+  if(o&&o.vendorStatus[vendor]&&o.vendorStatus[vendor].overrideDue)
+    delete o.vendorStatus[vendor].overrideDue[key];
+  closeModal('modal-override');
+  renderQueue();
+}
+
+// ─── ORDERS TABLE ─────────────────────────────────────────────────────────────
+function renderOrders(){
+  const filtered=activeFilter==='all'?orders:orders.filter(o=>o.stage===activeFilter);
+  const tbody=document.getElementById('orders-tbody');
+  tbody.innerHTML=filtered.map(o=>{
+    const si=stageIdx(o.stage);
+    const segs=STAGES.map((_,i)=>`<div class="mp-seg ${i<si?'done':i===si?'current':''}"></div>`).join('');
+    const vips=o.vendors.map((v,i)=>vip(v,i)).join('');
+    const openFU=buildActions().filter(a=>a.orderId===o.id).length;
+    const fuHtml=openFU>0?`<span class="fu-badge" style="background:var(--red-bg);color:var(--red)"><i class="ti ti-bell" style="font-size:10px"></i> ${openFU}</span>`:`<span style="color:var(--faint);font-size:11px">—</span>`;
+    const priDot={high:'var(--red)',med:'var(--amber)',low:'var(--accent)'}[o.priority];
+    return`<tr onclick="openDetail('${o.id}')">
+      <td class="order-id-cell">${o.id}</td>
+      <td><div style="display:flex;align-items:center;gap:7px"><div style="width:7px;height:7px;border-radius:50%;background:${priDot};flex-shrink:0"></div><span style="font-weight:500">${o.item}</span></div></td>
+      <td>${stagePill(o.stage)}</td>
+      <td><div class="vendor-pips">${vips}</div></td>
+      <td><div class="mini-progress" style="width:90px">${segs}</div></td>
+      <td>${fuHtml}</td>
+      <td style="color:var(--muted)">${o.lastActivity}</td>
+      <td><i class="ti ti-chevron-right" style="color:var(--faint)"></i></td>
+    </tr>`;
+  }).join('');
+  if(!filtered.length)tbody.innerHTML=`<tr><td colspan="8" style="text-align:center;padding:32px;color:var(--muted)">No orders at this stage</td></tr>`;
+}
+
+function filterOrders(f,el){
+  activeFilter=f;
+  document.querySelectorAll('.f-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  renderOrders();
+}
+
+// ─── VENDORS VIEW ─────────────────────────────────────────────────────────────
+function renderVendors(){
+  const grid=document.getElementById('vendors-grid');
+  grid.innerHTML=Object.entries(vendorDB).map(([key,v],i)=>{
+    const c=V_COLORS[i%V_COLORS.length];
+    const orderCount=orders.filter(o=>o.vendors.includes(key)).length;
+    const pendingCount=buildActions().filter(a=>a.vendor===key).length;
+    return`<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden">
+      <div style="padding:14px 16px;border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:center">
+        <div style="width:38px;height:38px;border-radius:6px;background:${c[1]};color:${c[0]};display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;font-family:'DM Mono',monospace">${key.slice(0,2).toUpperCase()}</div>
+        <div><div style="font-weight:500;font-size:13px">${v.name}</div><div style="font-size:11px;color:var(--muted)">${v.contact}</div></div>
+      </div>
+      <div style="padding:10px 16px;display:flex;gap:20px">
+        <div><div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em">Orders</div><div style="font-size:20px;font-weight:500;font-family:'DM Mono',monospace">${orderCount}</div></div>
+        <div><div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em">Pending</div><div style="font-size:20px;font-weight:500;font-family:'DM Mono',monospace;color:${pendingCount>0?'var(--red)':'var(--accent)'}">${pendingCount}</div></div>
+        <div><div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em">Phone</div><div style="font-size:11px;margin-top:4px">${v.phone}</div></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ─── ACTIVITY ─────────────────────────────────────────────────────────────────
+function renderActivity(){
+  document.getElementById('activity-list').innerHTML=activities.map(a=>`
+    <div style="display:flex;gap:12px;padding:11px 16px;border-bottom:1px solid var(--border)">
+      <div style="width:8px;height:8px;border-radius:50%;background:${a.color};margin-top:4px;flex-shrink:0"></div>
+      <div style="flex:1">
+        <div style="font-size:12px;font-weight:500">${a.text}</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px"><span style="font-family:'DM Mono',monospace;font-size:10px;background:var(--surface2);padding:1px 6px;border-radius:3px;margin-right:6px">${a.order}</span>${a.time}</div>
+      </div>
+    </div>`).join('');
+}
+
+// ─── DETAIL VIEW ──────────────────────────────────────────────────────────────
+function openDetail(id){
+  currentOrderId=id;
+  const o=orders.find(x=>x.id===id);
+  if(!o)return;
+  // Hide main content, show detail
+  document.getElementById('main-content').style.display='none';
+  const dv=document.getElementById('detail-view');
+  dv.classList.add('active');
+  // Header
+  document.getElementById('d-order-id').textContent=o.id+' · '+o.category;
+  document.getElementById('d-order-title').textContent=o.item;
+  document.getElementById('d-order-meta').innerHTML=`${stagePill(o.stage)}<span style="font-size:11px;color:var(--muted)">${o.vendors.length} vendor${o.vendors.length!==1?'s':''} · Last updated ${o.lastActivity}</span>`;
+  // Stepper
+  const si=stageIdx(o.stage);
+  document.getElementById('d-stepper').innerHTML=STAGES.map((s,i)=>`<div class="step"><div class="step-box ${i<si?'s-done':i===si?'s-current':''}" onclick="quickSetStage('${s}')">${s}</div></div>`).join('');
+  // Tab counts
+  document.getElementById('tc-vendors').textContent=o.vendors.length;
+  document.getElementById('tc-englog').textContent=o.engRounds.length;
+  document.getElementById('tc-docs').textContent=o.docs.length;
+  // Vendor matrix
+  renderVendorMatrix(o);
+  // Eng log
+  renderEngLog(o);
+  // Docs
+  renderDocs(o);
+  // Notes
+  renderNotes(o);
+  // Advance stage modal setup
+  const as=document.getElementById('adv-stage');
+  as.value=o.stage;
+  const av=document.getElementById('adv-vendor');
+  av.innerHTML='<option value="">— Not yet awarded —</option>'+o.vendors.map(v=>`<option value="${v}"${o.awardedVendor===v?' selected':''}>${vendorDB[v]?.name||v}</option>`).join('');
+  // Log round vendor dropdown
+  const lr=document.getElementById('lr-vendor');
+  lr.innerHTML=o.vendors.map(v=>`<option value="${v}">${vendorDB[v]?.name||v}</option>`).join('');
+  // Reset to first tab
+  switchTab(document.querySelector('#detail-tabs .tab'),'dtab-vendors');
+}
+
+function closeDetail(){
+  document.getElementById('main-content').style.display='';
+  document.getElementById('detail-view').classList.remove('active');
+  currentOrderId=null;
+}
+
+function renderVendorMatrix(o){
+  const rows=document.getElementById('vendor-matrix-rows');
+  rows.innerHTML=o.vendors.map((v,i)=>{
+    const vs=o.vendorStatus[v]||{};
+    const c=V_COLORS[i%V_COLORS.length];
+    const isAwarded=o.awardedVendor===v;
+    return`<div class="vm-row" style="${isAwarded?'background:var(--accent-bg)':''}">
+      <div class="vm-cell">
+        <div class="vm-vendor">
+          <div class="vm-avatar" style="background:${c[1]};color:${c[0]}">${v.slice(0,2).toUpperCase()}</div>
+          <div>
+            <div class="vm-name">${vendorDB[v]?.name||v}${isAwarded?` <span class="tag" style="background:var(--accent-bg);color:var(--accent)">PO Awarded</span>`:''}</div>
+            <div class="vm-contact">${vendorDB[v]?.contact||''}</div>
+          </div>
+        </div>
+      </div>
+      <div class="vm-cell" onclick="toggleVS('${o.id}','${v}','contacted')">${dot(vs.contacted)}</div>
+      <div class="vm-cell" onclick="toggleVS('${o.id}','${v}','responded')">${dot(vs.responded)}</div>
+      <div class="vm-cell" onclick="toggleVS('${o.id}','${v}','docsToEng')">${dot(vs.docsToEng)}</div>
+      <div class="vm-cell" onclick="toggleVS('${o.id}','${v}','engFeedback')">${dot(vs.engFeedback)}</div>
+      <div class="vm-cell" onclick="toggleVS('${o.id}','${v}','techCleared')">${dot(vs.techCleared)}</div>
+      <div class="vm-cell locked-cell"></div>
+    </div>`;
+  }).join('');
+}
+
+function toggleVS(orderId,vendor,field){
+  const o=orders.find(x=>x.id===orderId);
+  if(!o)return;
+  if(!o.vendorStatus[vendor])o.vendorStatus[vendor]={};
+  o.vendorStatus[vendor][field]=!o.vendorStatus[vendor][field];
+  o.lastActivity='Just now';
+  activities.unshift({text:`${field} updated for ${vendorDB[vendor]?.name||vendor}`,order:orderId,time:'Just now',color:'var(--accent)'});
+  renderVendorMatrix(o);
+}
+
+function renderEngLog(o){
+  const list=document.getElementById('eng-log-list');
+  if(!o.engRounds.length){list.innerHTML=`<div class="empty-state"><i class="ti ti-arrows-exchange"></i>No engineering rounds logged yet</div>`;return;}
+  // Group by vendor
+  list.innerHTML=o.engRounds.map((r,i)=>`
+    <div class="eng-round">
+      <div class="er-header">
+        <span class="er-round-num">Round ${r.round}</span>
+        <span class="er-vendor">${vendorDB[r.vendor]?.name||r.vendor}</span>
+        <span class="er-engineer"><i class="ti ti-user" style="font-size:11px"></i> ${r.engineer}</span>
+        <span class="er-status ${r.status==='open'?'er-open':'er-closed'}">${r.status==='open'?'Open':'Closed'}</span>
+      </div>
+      <div class="er-body">
+        <div class="er-section">
+          <label>Request / Sent to Engineer</label>
+          <p>${r.request||'—'}</p>
+        </div>
+        <div class="er-section">
+          <label>Engineering Response</label>
+          <p>${r.response||'<em style="color:var(--faint)">Awaiting response</em>'}</p>
+        </div>
+      </div>
+      <div class="er-dates">
+        <div class="er-date-item"><i class="ti ti-send"></i> Sent: ${fmtDate(r.sent)}</div>
+        <div class="er-date-item"><i class="ti ti-inbox"></i> Received: ${r.received?fmtDate(r.received):'<em style="color:var(--faint)">Pending</em>'}</div>
+        ${r.received&&r.sent?`<div class="er-date-item" style="margin-left:auto;color:var(--accent)"><i class="ti ti-clock"></i> ${Math.round((new Date(r.received)-new Date(r.sent))/(1000*60*60*24))} days turnaround</div>`:''}
+      </div>
+      ${r.docs&&r.docs.length?`<div class="er-docs"><span style="font-size:10px;color:var(--muted);margin-right:4px">Docs:</span>${r.docs.map(d=>`<div class="doc-pill"><i class="ti ti-file-text"></i>${d}</div>`).join('')}</div>`:''}
+    </div>`).join('');
+}
+
+function renderDocs(o){
+  const container=document.getElementById('docs-by-stage');
+  if(!o.docs.length){container.innerHTML=`<div class="empty-state" style="padding:24px"><i class="ti ti-files"></i>No documents uploaded yet</div>`;return;}
+  const byStage={};
+  o.docs.forEach(d=>{if(!byStage[d.stage])byStage[d.stage]=[];byStage[d.stage].push(d);});
+  container.innerHTML=Object.entries(byStage).map(([stage,docs])=>`
+    <div style="margin-bottom:16px">
+      <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin-bottom:8px">${stage}</div>
+      ${docs.map(d=>`<div style="display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:6px">
+        <i class="ti ti-file-text" style="color:var(--blue);font-size:16px"></i>
+        <span style="flex:1;font-size:12px;font-weight:500">${d.name}</span>
+        <span style="font-size:11px;color:var(--faint);font-family:'DM Mono',monospace">${d.date}</span>
+        <i class="ti ti-download" style="color:var(--muted);cursor:pointer;font-size:14px"></i>
+      </div>`).join('')}
+    </div>`).join('');
+}
+
+function renderNotes(o){
+  const list=document.getElementById('notes-list');
+  if(!o.notes||!o.notes.length){list.innerHTML='';return;}
+  list.innerHTML=o.notes.map(n=>`<div style="background:var(--gold-bg);border:1px solid #e8d89a;border-radius:var(--radius);padding:11px 13px;margin-bottom:8px">
+    <div style="font-size:12px;line-height:1.5">${n.text}</div>
+    <div style="font-size:10px;color:var(--muted);margin-top:6px;font-family:'DM Mono',monospace">${n.date}</div>
+  </div>`).join('');
+}
+
+// ─── TABS ─────────────────────────────────────────────────────────────────────
+function switchTab(el,panelId){
+  document.querySelectorAll('#detail-tabs .tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById(panelId).classList.add('active');
+}
+
+// ─── STAGE ────────────────────────────────────────────────────────────────────
+function quickSetStage(s){
+  if(!currentOrderId)return;
+  const o=orders.find(x=>x.id===currentOrderId);
+  o.stage=s;o.lastActivity='Just now';
+  activities.unshift({text:`Stage updated to: ${s}`,order:o.id,time:'Just now',color:'var(--accent)'});
+  openDetail(currentOrderId);
+}
+
+function openAdvanceStageModal(){
+  document.getElementById('modal-advance').classList.remove('hidden');
+}
+
+function saveAdvanceStage(){
+  const o=orders.find(x=>x.id===currentOrderId);
+  if(!o)return;
+  o.stage=document.getElementById('adv-stage').value;
+  const av=document.getElementById('adv-vendor').value;
+  if(av)o.awardedVendor=av;
+  const note=document.getElementById('adv-note').value.trim();
+  o.lastActivity='Just now';
+  activities.unshift({text:`Stage → ${o.stage}${av?' · PO awarded to '+vendorDB[av]?.name:''}${note?' — '+note:''}`,order:o.id,time:'Just now',color:'var(--accent)'});
+  closeModal('modal-advance');
+  openDetail(currentOrderId);
+}
+
+// ─── ENG ROUND ────────────────────────────────────────────────────────────────
+function openLogRoundModal(){
+  document.getElementById('modal-log-round').classList.remove('hidden');
+}
+
+function saveRound(){
+  const o=orders.find(x=>x.id===currentOrderId);
+  if(!o)return;
+  const vendor=document.getElementById('lr-vendor').value;
+  const vendorRounds=o.engRounds.filter(r=>r.vendor===vendor).length;
+  const docFile=document.getElementById('lr-doc').files[0];
+  o.engRounds.push({
+    round:vendorRounds+1,
+    vendor,
+    engineer:document.getElementById('lr-engineer').value||'Unknown',
+    sent:document.getElementById('lr-sent').value,
+    received:document.getElementById('lr-received').value,
+    request:document.getElementById('lr-request').value,
+    response:document.getElementById('lr-response').value,
+    status:document.getElementById('lr-status').value,
+    docs:docFile?[docFile.name]:[],
+  });
+  o.lastActivity='Just now';
+  activities.unshift({text:`Eng. round ${vendorRounds+1} logged for ${vendorDB[vendor]?.name||vendor}`,order:o.id,time:'Just now',color:'var(--blue)'});
+  closeModal('modal-log-round');
+  renderEngLog(o);
+  document.getElementById('tc-englog').textContent=o.engRounds.length;
+}
+
+// ─── NEW ORDER ────────────────────────────────────────────────────────────────
+function openNewOrderModal(){newOrderVendors=[];document.getElementById('new-vendor-chips').innerHTML='';document.getElementById('modal-new-order').classList.remove('hidden');}
+
+function addNewVendorChip(sel){
+  const v=sel.value;sel.value='';
+  if(!v||newOrderVendors.includes(v))return;
+  newOrderVendors.push(v);
+  const c=V_COLORS[newOrderVendors.length%V_COLORS.length];
+  document.getElementById('new-vendor-chips').insertAdjacentHTML('beforeend',
+    `<span style="display:inline-flex;align-items:center;gap:5px;padding:4px 9px;border-radius:4px;background:${c[1]};color:${c[0]};font-size:11px;font-weight:600">${vendorDB[v]?.name||v} <span style="cursor:pointer;opacity:0.6" onclick="this.parentElement.remove();newOrderVendors=newOrderVendors.filter(x=>x!=='${v}')">×</span></span>`);
+}
+
+function createOrder(){
+  const item=document.getElementById('no-item').value.trim();
+  if(!item){alert('Please enter an item name');return;}
+  const newId='ORD-'+(orders.length+1).toString().padStart(3,'0');
+  const vs={};
+  (newOrderVendors.length?newOrderVendors:['AlphaTech']).forEach(v=>{vs[v]={contacted:true,responded:false,docsToEng:false,engFeedback:false,techCleared:false};});
+  orders.unshift({
+    id:newId,item,category:document.getElementById('no-category').value,
+    stage:'Inquiry',priority:document.getElementById('no-priority').value,
+    vendors:newOrderVendors.length?[...newOrderVendors]:['AlphaTech'],
+    awardedVendor:'',lastActivity:'Just now',
+    vendorStatus:vs,engRounds:[],docs:[],notes:[],
+  });
+  activities.unshift({text:`New order created: ${item}`,order:newId,time:'Just now',color:'var(--purple)'});
+  closeModal('modal-new-order');
+  renderOrders();
+  renderQueue();
+}
+
+// ─── DOCS ─────────────────────────────────────────────────────────────────────
+function handleDocUpload(e){
+  const f=e.target.files[0];if(!f||!currentOrderId)return;
+  const o=orders.find(x=>x.id===currentOrderId);
+  o.docs.push({name:f.name,stage:o.stage,date:'Today'});
+  o.lastActivity='Just now';
+  activities.unshift({text:`Document uploaded: ${f.name}`,order:o.id,time:'Just now',color:'var(--blue)'});
+  renderDocs(o);
+  document.getElementById('tc-docs').textContent=o.docs.length;
+  e.target.value='';
+}
+
+// ─── NOTES ────────────────────────────────────────────────────────────────────
+function saveNote(){
+  const o=orders.find(x=>x.id===currentOrderId);if(!o)return;
+  const t=document.getElementById('note-input').value.trim();if(!t)return;
+  if(!o.notes)o.notes=[];
+  o.notes.unshift({text:t,date:new Date().toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})});
+  document.getElementById('note-input').value='';
+  renderNotes(o);
+}
+
+// ─── MODALS ───────────────────────────────────────────────────────────────────
+function closeModal(id){document.getElementById(id).classList.add('hidden');}
+document.querySelectorAll('.overlay').forEach(m=>m.addEventListener('click',function(e){if(e.target===this)this.classList.add('hidden')}));
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+document.getElementById('today-date').textContent=new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+renderQueue();
+
+// Animations
+const style=document.createElement('style');
+style.textContent='@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}';
+document.head.appendChild(style);
+</script>
+<!-- MODAL: OVERRIDE FOLLOW-UP DATE -->
+<div class="overlay hidden" id="modal-override">
+  <div class="modal" style="width:400px">
+    <div class="modal-head">
+      <div>
+        <div class="modal-head-title">Override follow-up date</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px">Change when this action is flagged as overdue</div>
+      </div>
+      <button class="btn btn-sm" onclick="closeModal('modal-override')" style="margin-left:auto"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body">
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;margin-bottom:14px;font-size:12px">
+        <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:3px">Action</div>
+        <div id="ov-desc" style="font-weight:500"></div>
+      </div>
+      <div style="background:var(--accent-bg);border:1px solid #b8d4b8;border-radius:var(--radius);padding:9px 12px;margin-bottom:14px;font-size:11px;color:var(--accent);display:flex;align-items:center;gap:7px">
+        <i class="ti ti-robot" style="font-size:14px"></i>
+        <span id="ov-auto-info"></span>
+      </div>
+      <div class="field">
+        <label>Override follow-up date <span style="font-weight:400;color:var(--muted)">(leave blank to use auto)</span></label>
+        <input type="date" id="ov-date">
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-top:8px;line-height:1.5">
+        Setting a date here overrides the auto-calculation. The system will flag this action as overdue on the date you set, regardless of the default timer.
+      </div>
+    </div>
+    <div class="modal-footer" style="justify-content:space-between">
+      <button class="btn btn-sm" onclick="clearOverride()" style="color:var(--red);border-color:var(--red)"><i class="ti ti-refresh"></i> Reset to auto</button>
+      <div style="display:flex;gap:8px">
+        <button class="btn" onclick="closeModal('modal-override')">Cancel</button>
+        <button class="btn btn-primary" onclick="saveOverride()"><i class="ti ti-check"></i> Save override</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
