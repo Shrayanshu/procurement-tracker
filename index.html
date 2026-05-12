@@ -676,65 +676,87 @@ function fmtDueLabel(dateStr, thresholdDays, overrideDue){
 }
 
 let orders = [
+  // ORD-001: Has overdue vendor (red) + an eng round sent just 1 day ago (amber - not yet overdue)
   {id:'ORD-001',item:'CNC Machining Center',category:'Machinery',stage:'Commercial Assessment',priority:'high',
    vendors:['AlphaTech','PrecisionCo','GlobalMfg'],awardedVendor:'',lastActivity:'Today, 9:41 AM',
    vendorStatus:{
      AlphaTech:{contacted:true,contactedDate:daysAgo(14),responded:true,respondedDate:daysAgo(10),docsToEng:true,docsToEngDate:daysAgo(9),engFeedback:true,engFeedbackDate:daysAgo(5),techCleared:true,overrideDue:{}},
-     PrecisionCo:{contacted:true,contactedDate:daysAgo(12),responded:true,respondedDate:daysAgo(8),docsToEng:true,docsToEngDate:daysAgo(7),engFeedback:false,engFeedbackDate:null,techCleared:false,overrideDue:{}},
+     PrecisionCo:{contacted:true,contactedDate:daysAgo(12),responded:true,respondedDate:daysAgo(2),docsToEng:true,docsToEngDate:daysAgo(1),engFeedback:false,engFeedbackDate:null,techCleared:false,overrideDue:{}},
      GlobalMfg:{contacted:true,contactedDate:daysAgo(7),responded:false,respondedDate:null,docsToEng:false,docsToEngDate:null,engFeedback:false,engFeedbackDate:null,techCleared:false,overrideDue:{}},
    },
    engRounds:[
-     {round:1,vendor:'AlphaTech',engineer:'Eng. Sharma',sent:'2025-01-10',received:'2025-01-14',
+     {round:1,vendor:'AlphaTech',engineer:'Eng. Sharma',sent:daysAgo(18),received:daysAgo(14),
       request:'Technical spec review of 5-axis CNC spindle speed and tolerance specs.',
       response:'Specs acceptable. Spindle speed meets requirement. Recommend requesting updated drawings.',
       status:'closed',docs:['AlphaTech_Spec_Review.pdf']},
-     {round:2,vendor:'AlphaTech',engineer:'Eng. Sharma',sent:'2025-01-18',received:'2025-01-22',
+     {round:2,vendor:'AlphaTech',engineer:'Eng. Sharma',sent:daysAgo(10),received:daysAgo(6),
       request:'Revised drawings received from vendor — review requested.',
       response:'Drawings cleared. Technically approved.',
       status:'closed',docs:['AlphaTech_Revised_Drawings.pdf','Eng_Clearance.pdf']},
-     {round:1,vendor:'PrecisionCo',engineer:'Eng. Rajan',sent:'2025-01-20',received:'',
+     {round:1,vendor:'PrecisionCo',engineer:'Eng. Rajan',sent:daysAgo(1),received:'',
       request:'Initial spec sheet sent for review. Motor rating and bed size to be confirmed.',
       response:'',status:'open',docs:['PrecisionCo_Spec.pdf']},
    ],
    docs:[{name:'RFQ_AlphaTech.pdf',stage:'Inquiry',date:'Jan 5'},{name:'AlphaTech_Quote_v1.pdf',stage:'Inquiry',date:'Jan 9'},{name:'AlphaTech_Eng_Clearance.pdf',stage:'Engineering Review',date:'Jan 22'}],
    notes:[{text:'Waiting on PrecisionCo engineer feedback before moving to commercial.',date:'Jan 23, 10:00 AM'}],
   },
+  // ORD-002: BetaMachines responded 2 days ago, docs not sent yet (red - overdue at 3d threshold)
+  //          TechForge eng round sent yesterday (amber - not overdue yet)
   {id:'ORD-002',item:'Industrial Hydraulic Press',category:'Machinery',stage:'Engineering Review',priority:'med',
    vendors:['TechForge','BetaMachines'],awardedVendor:'',lastActivity:'Yesterday',
    vendorStatus:{
-     TechForge:{contacted:true,contactedDate:daysAgo(10),responded:true,respondedDate:daysAgo(6),docsToEng:true,docsToEngDate:daysAgo(5),engFeedback:false,engFeedbackDate:null,techCleared:false,overrideDue:{}},
-     BetaMachines:{contacted:true,contactedDate:daysAgo(10),responded:true,respondedDate:daysAgo(4),docsToEng:false,docsToEngDate:null,engFeedback:false,engFeedbackDate:null,techCleared:false,overrideDue:{}},
+     TechForge:{contacted:true,contactedDate:daysAgo(10),responded:true,respondedDate:daysAgo(6),docsToEng:true,docsToEngDate:daysAgo(2),engFeedback:false,engFeedbackDate:null,techCleared:false,overrideDue:{}},
+     BetaMachines:{contacted:true,contactedDate:daysAgo(10),responded:true,respondedDate:daysAgo(2),docsToEng:false,docsToEngDate:null,engFeedback:false,engFeedbackDate:null,techCleared:false,overrideDue:{}},
    },
    engRounds:[
-     {round:1,vendor:'TechForge',engineer:'Eng. Verma',sent:'2025-01-21',received:'',
+     {round:1,vendor:'TechForge',engineer:'Eng. Verma',sent:daysAgo(2),received:'',
       request:'Hydraulic cylinder pressure rating and stroke length review.',
       response:'',status:'open',docs:['TechForge_HydraulicSpec.pdf']},
    ],
    docs:[{name:'RFQ_HydraulicPress.pdf',stage:'Inquiry',date:'Jan 15'},{name:'TechForge_Quote.pdf',stage:'Inquiry',date:'Jan 20'}],
    notes:[],
   },
+  // ORD-003: AlphaTech contacted 8 days ago no reply (red - overdue)
+  //          TechForge contacted 3 days ago no reply (amber - due in 2 days)
+  //          No docs uploaded yet (grey - housekeeping)
   {id:'ORD-003',item:'Precision Lathe × 2 Units',category:'Machinery',stage:'Inquiry',priority:'high',
    vendors:['AlphaTech','TechForge'],awardedVendor:'',lastActivity:'3 days ago',
    vendorStatus:{
      AlphaTech:{contacted:true,contactedDate:daysAgo(8),responded:false,respondedDate:null,docsToEng:false,docsToEngDate:null,engFeedback:false,engFeedbackDate:null,techCleared:false,overrideDue:{}},
-     TechForge:{contacted:true,contactedDate:daysAgo(6),responded:false,respondedDate:null,docsToEng:false,docsToEngDate:null,engFeedback:false,engFeedbackDate:null,techCleared:false,overrideDue:{}},
+     TechForge:{contacted:true,contactedDate:daysAgo(3),responded:false,respondedDate:null,docsToEng:false,docsToEngDate:null,engFeedback:false,engFeedbackDate:null,techCleared:false,overrideDue:{}},
    },
    engRounds:[],
    docs:[],notes:[],
   },
+  // ORD-004: Completed PO - no actions
   {id:'ORD-004',item:'Welding Robot Arm',category:'Machinery',stage:'PO Awarded',priority:'low',
    vendors:['PrecisionCo'],awardedVendor:'PrecisionCo',lastActivity:'Last week',
    vendorStatus:{
      PrecisionCo:{contacted:true,contactedDate:daysAgo(30),responded:true,respondedDate:daysAgo(26),docsToEng:true,docsToEngDate:daysAgo(25),engFeedback:true,engFeedbackDate:daysAgo(21),techCleared:true,overrideDue:{}},
    },
    engRounds:[
-     {round:1,vendor:'PrecisionCo',engineer:'Eng. Sharma',sent:'2024-12-10',received:'2024-12-14',
+     {round:1,vendor:'PrecisionCo',engineer:'Eng. Sharma',sent:daysAgo(25),received:daysAgo(21),
       request:'Welding arm reach, payload, and IP rating check.',
       response:'All specs cleared. IP65 confirmed. Technically approved.',
       status:'closed',docs:['WeldingRobot_EngClearance.pdf']},
    ],
    docs:[{name:'PO_PrecisionCo.pdf',stage:'PO Awarded',date:'Jan 10'},{name:'Final_Quote.pdf',stage:'Commercial Assessment',date:'Jan 5'}],
    notes:[{text:'PO issued. Delivery expected in 8 weeks.',date:'Jan 10, 3:15 PM'}],
+  },
+  // ORD-005: Stage is Engineering Review but zero docs uploaded (grey - housekeeping)
+  //          GlobalMfg eng round sent today (amber - not overdue)
+  {id:'ORD-005',item:'Sheet Metal Bending Machine',category:'Machinery',stage:'Engineering Review',priority:'med',
+   vendors:['GlobalMfg','BetaMachines'],awardedVendor:'',lastActivity:'Today',
+   vendorStatus:{
+     GlobalMfg:{contacted:true,contactedDate:daysAgo(6),responded:true,respondedDate:daysAgo(1),docsToEng:true,docsToEngDate:daysAgo(0),engFeedback:false,engFeedbackDate:null,techCleared:false,overrideDue:{}},
+     BetaMachines:{contacted:true,contactedDate:daysAgo(6),responded:true,respondedDate:daysAgo(1),docsToEng:false,docsToEngDate:null,engFeedback:false,engFeedbackDate:null,techCleared:false,overrideDue:{}},
+   },
+   engRounds:[
+     {round:1,vendor:'GlobalMfg',engineer:'Eng. Sharma',sent:daysAgo(0),received:'',
+      request:'Sheet thickness capacity and bending angle range review.',
+      response:'',status:'open',docs:[]},
+   ],
+   docs:[],notes:[],
   },
 ];
 
